@@ -48,6 +48,7 @@ object IconTinterUtils {
 
     private const val CORNER_STYLE_ROUND = 0
     private const val CORNER_STYLE_SQUARISH = 1
+    private const val CORNER_STYLE_SHAPES = 2
 
     private val MATERIAL_COLOR_BG_RES_IDS = intArrayOf(
         R.color.m3_ref_palette_blue90,
@@ -112,7 +113,7 @@ object IconTinterUtils {
         val cornerStyle = Settings.System.getIntForUser(
             context.contentResolver,
             ICON_CORNER_STYLE,
-            CORNER_STYLE_ROUND,
+            CORNER_STYLE_SHAPES,
             UserHandle.USER_CURRENT
         )
 
@@ -159,7 +160,7 @@ object IconTinterUtils {
         val cornerStyle = Settings.System.getIntForUser(
             context.contentResolver,
             ICON_CORNER_STYLE,
-            CORNER_STYLE_ROUND,
+            CORNER_STYLE_SHAPES,
             UserHandle.USER_CURRENT
         )
 
@@ -190,7 +191,7 @@ object IconTinterUtils {
         val cornerStyle = Settings.System.getIntForUser(
             context.contentResolver,
             ICON_CORNER_STYLE,
-            CORNER_STYLE_ROUND,
+            CORNER_STYLE_SHAPES,
             UserHandle.USER_CURRENT
         )
 
@@ -253,11 +254,12 @@ object IconTinterUtils {
             getCachedColorsForPreference(key, res)
         }
 
-        val cornerRadiusDp = if (cornerStyle == CORNER_STYLE_ROUND) {
-            ROUND_CORNER_RADIUS_DP
-        } else {
+        val cornerRadiusDp = if (cornerStyle == CORNER_STYLE_SQUARISH) {
             SQUARISH_CORNER_RADIUS_DP
+        } else {
+            ROUND_CORNER_RADIUS_DP
         }
+        val shapeKey = if (cornerStyle == CORNER_STYLE_SHAPES) key ?: "" else null
 
         return when (iconStyle) {
             ICON_STYLE_MATERIAL_EXPRESSIVE_ICON -> {
@@ -265,7 +267,8 @@ object IconTinterUtils {
                     icon, colors.bg,
                     iconColor = colors.fg,
                     cornerRadiusDp = cornerRadiusDp,
-                    context = context
+                    context = context,
+                    shapeKey = shapeKey
                 )
             }
 
@@ -275,14 +278,15 @@ object IconTinterUtils {
                     icon, saturatedBgColor,
                     iconColor = Color.WHITE,
                     cornerRadiusDp = cornerRadiusDp,
-                    context = context
+                    context = context,
+                    shapeKey = shapeKey
                 )
             }
 
             ICON_STYLE_GRADIENT_BG_WHITE_ICON -> {
                 buildIconWithGradientBackground(
                     icon, colors.bg,
-                    cornerRadiusDp, context
+                    cornerRadiusDp, context, shapeKey
                 )
             }
 
@@ -299,7 +303,8 @@ object IconTinterUtils {
                     fillColor = Color.TRANSPARENT,
                     cornerRadiusDp = cornerRadiusDp,
                     context = context,
-                    useAccentForIcon = true
+                    useAccentForIcon = true,
+                    shapeKey = shapeKey
                 )
             }
 
@@ -310,7 +315,8 @@ object IconTinterUtils {
                     fillColor = Color.TRANSPARENT,
                     cornerRadiusDp = cornerRadiusDp,
                     context = context,
-                    useAccentForIcon = false
+                    useAccentForIcon = false,
+                    shapeKey = shapeKey
                 )
             }
 
@@ -335,13 +341,16 @@ object IconTinterUtils {
         bgColor: Int,
         iconColor: Int,
         cornerRadiusDp: Int,
-        context: Context
+        context: Context,
+        shapeKey: String? = null
     ): Drawable {
         val density = context.resources.displayMetrics.density
         val padding = (BG_PADDING_DP * density).toInt()
         val cornerRadius = (cornerRadiusDp * density).toInt()
 
-        val bgDrawable = GradientDrawable().apply {
+        val bgDrawable = if (shapeKey != null) {
+            ShapeBackgroundDrawable(shapeKey, bgColor)
+        } else GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             this.cornerRadius = cornerRadius.toFloat()
             setColor(bgColor)
@@ -364,7 +373,8 @@ object IconTinterUtils {
         icon: Drawable,
         baseColor: Int,
         cornerRadiusDp: Int,
-        context: Context
+        context: Context,
+        shapeKey: String? = null
     ): Drawable {
         val density = context.resources.displayMetrics.density
         val padding = (BG_PADDING_DP * density).toInt()
@@ -380,7 +390,9 @@ object IconTinterUtils {
         )
         val gradientColors = intArrayOf(startColor, baseColor, endColor)
 
-        val bgDrawable = GradientDrawable().apply {
+        val bgDrawable = if (shapeKey != null) {
+            ShapeBackgroundDrawable(shapeKey, baseColor, gradientColors = gradientColors)
+        } else GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             this.cornerRadius = cornerRadius.toFloat()
             colors = gradientColors
@@ -408,14 +420,17 @@ object IconTinterUtils {
         fillColor: Int,
         cornerRadiusDp: Int,
         context: Context,
-        useAccentForIcon: Boolean
+        useAccentForIcon: Boolean,
+        shapeKey: String? = null
     ): Drawable {
         val density = context.resources.displayMetrics.density
         val padding = (BG_PADDING_DP * density).toInt()
         val outlineWidth = (OUTLINE_WIDTH_DP * density).toInt()
         val cornerRadius = (cornerRadiusDp * density).toInt()
 
-        val outlineDrawable = GradientDrawable().apply {
+        val outlineDrawable = if (shapeKey != null) {
+            ShapeBackgroundDrawable(shapeKey, fillColor, outlineColor, outlineWidth.toFloat())
+        } else GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             this.cornerRadius = cornerRadius.toFloat()
             setColor(fillColor)

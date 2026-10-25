@@ -17,6 +17,7 @@ android_library {
         "com.google.android.material_material",
         "kotlin-stdlib",
         "androidx.compose.material3_material3",
+        "androidx.graphics_graphics-shapes",
     ],
 
     kotlincflags: [
