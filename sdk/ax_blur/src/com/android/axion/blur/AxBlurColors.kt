@@ -63,6 +63,12 @@ object AxBlurColors {
         return color(context, R.color.ax_blur_surface_bright_expressive)
     }
 
+
+    @JvmStatic
+    fun surfaceLightTint(context: Context): Int {
+        return surfaceBrightTint(context)
+    }
+
     @JvmStatic
     fun surfaceBrightTint(context: Context): Int {
         return color(context, R.color.ax_blur_surface_bright_expressive_tint)
