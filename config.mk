@@ -171,13 +171,11 @@ PRODUCT_PACKAGES += \
     FontExotwoOverlay \
     FontFifa2018Overlay \
     FontGrandHotelOverlay \
-    FontGoogleSansFlexOverlay \
     FontHarmonySansOverlay \
     FontIBMPlexSansOverlay \
     FontLatoOverlay \
     FontLinotteOverlay \
     FontNokiaPureOverlay \
-    FontNothingDotHeadlineOverlay \
     FontNothingDotOverlay \
     FontNunitoOverlay \
     FontOneplusSansOverlay \
