@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.dismiss
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
@@ -165,6 +166,7 @@ fun BottomSheetDialog(
             Box(
                 Modifier
                     .fillMaxSize()
+                    .semantics { hideFromAccessibility() }
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -212,7 +214,13 @@ fun BottomSheetDialog(
                         orientation = Orientation.Vertical,
                         flingBehavior = flingBehavior,
                     )
-                    .nestedScroll(nestedScrollConnection),
+                    .nestedScroll(nestedScrollConnection)
+                    .semantics {
+                        dismiss {
+                            animatedDismiss()
+                            true
+                        }
+                    },
                 color = containerColor,
                 shape = SheetShape,
             ) {

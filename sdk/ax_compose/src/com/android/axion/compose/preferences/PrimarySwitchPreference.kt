@@ -30,7 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.android.axion.compose.R
 
 @Composable
 fun PrimarySwitchPreference(
@@ -49,6 +53,10 @@ fun PrimarySwitchPreference(
     iconBackgroundColor: Color? = null,
     position: PreferencePosition = LocalPreferencePosition.current,
 ) {
+    val stateText = stringResource(
+        if (checked) R.string.switch_state_on else R.string.switch_state_off
+    )
+
     BasePreference(
         title = title,
         summary = summary,
@@ -59,11 +67,13 @@ fun PrimarySwitchPreference(
         iconTint = iconTint,
         iconBackgroundColor = iconBackgroundColor,
         position = position,
-        modifier = modifier.combinedClickable(
-            enabled = enabled,
-            onClick = onClick,
-            onLongClick = onLongClick,
-        ),
+        modifier = modifier
+            .semantics { stateDescription = stateText }
+            .combinedClickable(
+                enabled = enabled,
+                onClick = onClick,
+                onLongClick = onLongClick,
+            ),
         widget = {
             VerticalDivider(
                 modifier = Modifier
